@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import { use } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 
 const AddQuery = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = use(AuthContext);
   const navigate = useNavigate();
 
   const handleAddQuery = (e) => {
@@ -20,24 +20,36 @@ const AddQuery = () => {
     newQuery.createdAt = new Date().toISOString();
     newQuery.recommendationCount = 0;
 
+
     fetch("http://localhost:3000/queries", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify(newQuery),
     })
       .then((res) => res.json())
       .then((data) => {
+
         if (data.insertedId || data.acknowledged) {
-          Swal.fire("✅ Success", "Query added successfully!", "success");
+          Swal.fire({
+            title: "✅ Success",
+            text: "Query added successfully!",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+
           form.reset();
           navigate("/my-queries");
         }
+
       })
+
       .catch((err) => {
         console.error("Error submitting query:", err);
-        Swal.fire("❌ Error", "Failed to add query.", "error");
+        Swal.fire("Error", "Failed to add query.", "error");
       });
   };
 
@@ -50,7 +62,7 @@ const AddQuery = () => {
           <input
             type="text"
             name="productName"
-            placeholder="⚙️ Product Name"
+            placeholder="Product Name"
             required
             className="w-full input input-bordered focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
@@ -58,7 +70,7 @@ const AddQuery = () => {
           <input
             type="text"
             name="productBrand"
-            placeholder="🏷️ Product Brand"
+            placeholder="Product Brand"
             required
             className="w-full input input-bordered focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
@@ -66,7 +78,7 @@ const AddQuery = () => {
           <input
             type="url"
             name="imageUrl"
-            placeholder="🖼️ Image URL"
+            placeholder="Image URL"
             required
             className="w-full input input-bordered focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
@@ -74,23 +86,23 @@ const AddQuery = () => {
           <input
             type="text"
             name="queryTitle"
-            placeholder="❓ Query Title (e.g., Better alternatives?)"
+            placeholder="Query Title (e.g., Better alternatives?)"
             required
             className="w-full input input-bordered focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
 
           <textarea
             name="reason"
-            placeholder="📄 Reason for the query (Explain clearly)"
+            placeholder="Reason for the query (Explain clearly)"
             required
             className="w-full textarea textarea-bordered h-32 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           ></textarea>
 
           <button
             type="submit"
-            className="w-full cursor-pointer bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all duration-300"
+            className="w-full cursor-pointer bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition-all duration-300"
           >
-            ➕ Add Query
+            Add Query
           </button>
         </form>
       </div>

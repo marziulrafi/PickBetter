@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import Loading from '../components/Loading';
 
 const Queries = () => {
     const [queries, setQueries] = useState([]);
@@ -53,7 +54,7 @@ const Queries = () => {
 
 
             ) : (
-                <p className="text-center text-gray-500 mt-20">No queries available right now.</p>
+                <Loading/>
             )}
         </div>
     );

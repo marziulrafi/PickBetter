@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { AuthContext } from '../provider/AuthProvider';
 
 const MyQueries = () => {
-    const { user } = useContext(AuthContext);
+    const { user } = use(AuthContext);
     const [myQueries, setMyQueries] = useState([]);
 
     useEffect(() => {
