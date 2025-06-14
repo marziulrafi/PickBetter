@@ -37,7 +37,7 @@ const router = createBrowserRouter([
                 loader: () => fetch('http://localhost:3000/queries') 
             },
             {
-                path: "/queries/:id",
+                path: "/query-details/:id",
                 element: <PrivateRoute><QueryDetails /></PrivateRoute>,
                
             },
