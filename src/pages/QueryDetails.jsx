@@ -8,6 +8,7 @@ const QueryDetails = () => {
     const { user } = use(AuthContext);
     const [query, setQuery] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         productName: '',
@@ -33,11 +34,20 @@ const QueryDetails = () => {
     const handleSubmit = async e => {
         e.preventDefault();
 
+
+        if (submitting) return;
+        setSubmitting(true);
+
+
         const recommendation = {
             ...formData,
             queryId: query._id,
             queryTitle: query.queryTitle,
-            productName: query.productName,
+            productName: formData.productName,
+            productImage: formData.productImage,
+            reason: formData.reason,
+            queryProductName: query.productName,
+            queryProductBrand: query.productBrand,
             userEmail: query.userEmail,
             userName: query.userName,
             recommenderEmail: user.email,
@@ -45,10 +55,16 @@ const QueryDetails = () => {
             createdAt: new Date().toISOString()
         };
 
+
+        
         await fetch('http://localhost:3000/recommendations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(recommendation)
+        });
+
+        await fetch(`http://localhost:3000/increase-recommendation/${id}`, {
+            method: 'PATCH'
         });
 
 
@@ -56,6 +72,7 @@ const QueryDetails = () => {
         const res = await fetch(`http://localhost:3000/recommendations?queryId=${id}`);
         const updated = await res.json();
         setRecommendations(updated);
+        setSubmitting(false);
     };
 
     if (!query) return <Loading />;
@@ -90,8 +107,10 @@ const QueryDetails = () => {
 
                 <textarea name="reason" onChange={handleChange} value={formData.reason} placeholder="Recommendation Reason" required className="w-full px-4 py-2 rounded border" />
 
-                <button type="submit" className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">Add Recommendation</button>
-                
+                <button className="bg-blue-600 text-white cursor-pointer px-5 py-2 rounded hover:bg-blue-700" type="submit" disabled={submitting}>
+                    {submitting ? "Submitting..." : "Add Recommendation"}
+                </button>
+
             </form>
 
             <div className="space-y-4">
