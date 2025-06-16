@@ -37,7 +37,7 @@ const MyRecommendations = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-12">
-            <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">My Recommendations</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center text-blue-700">My Recommendations</h2>
 
             {myRecs.length === 0 ? (
                 <p className="text-center font-semibold text-gray-500">You haven't made any recommendations yet.</p>
@@ -47,7 +47,7 @@ const MyRecommendations = () => {
                         <thead className="bg-blue-100 text-gray-700">
                             <tr>
                                 <th className="px-6 py-3 text-left text-sm font-bold">Title</th>
-                                <th className="px-6 py-3 text-left text-sm font-bold">Product</th>
+                                <th className="px-6 py-3 text-left text-sm font-bold">Recommended Product</th>
                                 <th className="px-6 py-3 text-left text-sm font-bold">Query</th>
                                 <th className="px-6 py-3 text-left text-sm font-bold">Date</th>
                                 <th className="px-6 py-3 text-left text-sm font-bold">Action</th>

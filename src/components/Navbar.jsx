@@ -5,24 +5,22 @@ import { AuthContext } from '../provider/AuthProvider';
 const Navbar = () => {
     const { user, logOut } = use(AuthContext);
 
-    const links = (
+    const links = [
         <>
             <li><NavLink to="/" className="font-semibold">Home</NavLink></li>
             <li><NavLink to="/queries" className="font-semibold">Queries</NavLink></li>
-            <li><NavLink to="/login" className="font-semibold">Login</NavLink></li>
         </>
-    );
+    ];
 
-    const userLinks = (
+    const userLinks = [
         <>
             <li><NavLink to="/" className="font-semibold">Home</NavLink></li>
             <li><NavLink to="/queries" className="font-semibold">Queries</NavLink></li>
             <li><NavLink to="/recommendations-for-me" className="font-semibold">Recommendations For Me</NavLink></li>
             <li><NavLink to="/my-queries" className="font-semibold">My Queries</NavLink></li>
             <li><NavLink to="/my-recommendations" className="font-semibold">My Recommendations</NavLink></li>
-
         </>
-    );
+    ];
 
     return (
         <div className="navbar bg-base-100 shadow-sm">
@@ -39,7 +37,9 @@ const Navbar = () => {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                     >
-                        {user ? userLinks : links}
+                        {user ? userLinks : [...links,
+                        <li key="login"><NavLink to="/login" className="font-semibold">Login</NavLink></li>
+                        ]}
                     </ul>
                 </div>
 
@@ -53,10 +53,10 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-end">
-                {user && (
-                    <div className="dropdown dropdown-end">
-                        <button onClick={logOut} className="btn font-semibold cursor-pointer">Logout</button>
-                    </div>
+                {user ? (
+                    <button onClick={logOut} className="btn font-semibold cursor-pointer">Logout</button>
+                ) : (
+                    <Link to="/login" className="btn font-semibold">Login</Link>
                 )}
             </div>
         </div>
