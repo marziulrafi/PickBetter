@@ -34,10 +34,8 @@ const QueryDetails = () => {
     const handleSubmit = async e => {
         e.preventDefault();
 
-
         if (submitting) return;
         setSubmitting(true);
-
 
         const recommendation = {
             ...formData,
@@ -55,8 +53,6 @@ const QueryDetails = () => {
             createdAt: new Date().toISOString()
         };
 
-
-        
         await fetch('http://localhost:3000/recommendations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -66,7 +62,6 @@ const QueryDetails = () => {
         await fetch(`http://localhost:3000/increase-recommendation/${id}`, {
             method: 'PATCH'
         });
-
 
         setFormData({ title: '', productName: '', productImage: '', reason: '' });
         const res = await fetch(`http://localhost:3000/recommendations?queryId=${id}`);
@@ -78,50 +73,84 @@ const QueryDetails = () => {
     if (!query) return <Loading />;
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
-            <div className="bg-white p-6 rounded-xl shadow">
-                <h1 className="text-2xl font-bold mb-2">{query.queryTitle}</h1>
+        <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 md:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-2"> {query.queryTitle}</h1>
 
                 {query.imageUrl && (
                     <img
                         src={query.imageUrl}
                         alt=""
-                        className=" max-w-sm mx-auto my-4 rounded-lg shadow-md object-cover"
+                        className="w-full max-w-[200px] sm:max-w-[300px] md:max-w-sm mx-auto my-2 sm:my-4 rounded-lg shadow-md object-cover"
                     />
                 )}
 
-                <p><strong>Reason:</strong> {query.reason}</p>
-                <p className="mt-4 text-sm text-gray-600">Product: {query.productName} | Brand: {query.productBrand}</p>
-                <p className="text-sm text-gray-600">Asked by: {query.userName} ({query.userEmail})</p>
+                <p className="text-sm sm:text-base"><strong>Reason:</strong> {query.reason}</p>
+                <p className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-600">Product: {query.productName} | Brand: {query.productBrand}</p>
+                <p className="text-xs sm:text-sm text-gray-600">Asked by: {query.userName} ({query.userEmail})</p>
             </div>
 
+            <form onSubmit={handleSubmit} className="bg-blue-50 p-4 sm:p-6 rounded-xl shadow space-y-3 sm:space-y-4">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold">Add a Recommendation</h2>
 
-            <form onSubmit={handleSubmit} className="bg-blue-50 p-6 rounded-xl shadow space-y-4">
-                <h2 className="text-xl font-bold">Add a Recommendation</h2>
+                <input
+                    name="title"
+                    onChange={handleChange}
+                    value={formData.title}
+                    placeholder="Recommendation Title"
+                    required
+                    className="w-full px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded border"
+                />
 
-                <input name="title" onChange={handleChange} value={formData.title} placeholder="Recommendation Title" required className="w-full px-4 py-2 rounded border" />
+                <input
+                    name="productName"
+                    onChange={handleChange}
+                    value={formData.productName}
+                    placeholder="Recommended Product Name"
+                    required
+                    className="w-full px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded border"
+                />
 
-                <input name="productName" onChange={handleChange} value={formData.productName} placeholder="Recommended Product Name" required className="w-full px-4 py-2 rounded border" />
+                <input
+                    name="productImage"
+                    onChange={handleChange}
+                    value={formData.productImage}
+                    placeholder="Recommended Product Image URL"
+                    required
+                    className="w-full px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded border"
+                />
 
-                <input name="productImage" onChange={handleChange} value={formData.productImage} placeholder="Recommended Product Image URL" required className="w-full px-4 py-2 rounded border" />
+                <textarea
+                    name="reason"
+                    onChange={handleChange}
+                    value={formData.reason}
+                    placeholder="Recommendation Reason"
+                    required
+                    className="w-full px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded border"
+                />
 
-                <textarea name="reason" onChange={handleChange} value={formData.reason} placeholder="Recommendation Reason" required className="w-full px-4 py-2 rounded border" />
-
-                <button className="bg-blue-600 text-white cursor-pointer px-5 py-2 rounded hover:bg-blue-700" type="submit" disabled={submitting}>
+                <button
+                    className="bg-blue-600 text-white cursor-pointer px-3 sm:px-5 py-1 sm:py-2 text-xs sm:text-sm rounded hover:bg-blue-700"
+                    type="submit"
+                    disabled={submitting}
+                >
                     {submitting ? "Submitting..." : "Add Recommendation"}
                 </button>
-
             </form>
 
-            <div className="space-y-4">
-                <h3 className="text-xl font-bold">All Recommendations</h3>
+            <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold">All Recommendations</h3>
                 {recommendations.map(rec => (
-                    <div key={rec._id} className="p-4 bg-white rounded-xl border">
-                        <h4 className="text-lg font-bold">{rec.title}</h4>
-                        <img src={rec.productImage} alt={rec.productName} className="w-40 h-40 object-cover rounded mt-2" />
-                        <p className="mt-2"><strong>Product:</strong> {rec.productName}</p>
-                        <p className="text-sm text-gray-600">{rec.reason}</p>
-                        <p className="text-xs text-gray-500 mt-2">Recommended by {rec.recommenderName} ({rec.recommenderEmail}) on {new Date(rec.createdAt).toLocaleString()}</p>
+                    <div key={rec._id} className="p-3 sm:p-4 bg-white rounded-xl border">
+                        <h4 className="text-sm sm:text-base md:text-lg font-bold">{rec.title}</h4>
+                        <img
+                            src={rec.productImage}
+                            alt={rec.productName}
+                            className="w-24 sm:w-32 md:w-40 h-24 sm:h-32 md:h-40 object-cover rounded mt-1 sm:mt-2"
+                        />
+                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm"><strong>Product:</strong> {rec.productName}</p>
+                        <p className="text-xs sm:text-sm text-gray-600">{rec.reason}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Recommended by {rec.recommenderName} ({rec.recommenderEmail}) on {new Date(rec.createdAt).toLocaleString()}</p>
                     </div>
                 ))}
             </div>
