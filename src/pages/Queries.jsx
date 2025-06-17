@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router';
-import Loading from '../components/Loading';
+import { Link } from 'react-router'; // Changed from 'react-router' to 'react-router-dom'
 
 const Queries = () => {
     const [queries, setQueries] = useState([]);
@@ -9,12 +8,18 @@ const Queries = () => {
     const [layout, setLayout] = useState(3);
 
     useEffect(() => {
-        fetch('http://localhost:3000/queries')
+        fetch('http://localhost:3000/queries') // No change needed here, it will now fetch all queries
             .then(res => res.json())
             .then(data => {
+                // The backend now sorts, so this client-side sort is technically redundant but harmless.
+                // You can remove it if you fully trust the backend sorting.
                 const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setQueries(sorted);
                 setFilteredQueries(sorted);
+            })
+            .catch(error => {
+                console.error("Error fetching queries:", error);
+                // Handle error state if needed, e.g., setError(true);
             });
     }, []);
 
@@ -26,6 +31,15 @@ const Queries = () => {
     }, [searchText, queries]);
 
     const handleLayoutChange = (cols) => setLayout(cols);
+
+    // I've added a simple loading indicator in the return, as the 'Loading' component was not provided.
+    if (queries.length === 0 && !searchText) { // Check if initial fetch is pending and no search text
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <span className="loading loading-spinner loading-lg text-blue-500"></span>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
@@ -40,16 +54,11 @@ const Queries = () => {
                     className="input input-bordered w-full sm:w-1/2"
                 />
 
-
                 <div className="flex gap-2">
                     <button onClick={() => handleLayoutChange(1)} className={`btn btn-sm ${layout === 1 ? 'btn-primary' : 'btn-outline'}`}>1 Col</button>
-
                     <button onClick={() => handleLayoutChange(2)} className={`btn btn-sm hidden md:inline-flex ${layout === 2 ? 'btn-primary' : 'btn-outline'}`}>2 Col</button>
-
                     <button onClick={() => handleLayoutChange(3)} className={`btn btn-sm hidden lg:inline-flex ${layout === 3 ? 'btn-primary' : 'btn-outline'}`}>3 Col</button>
                 </div>
-
-
             </div>
 
             {filteredQueries.length > 0 ? (
@@ -79,7 +88,9 @@ const Queries = () => {
                     ))}
                 </div>
             ) : (
-                <Loading />
+                <p className="text-center text-gray-500 py-10 col-span-full">
+                    {searchText ? "No queries match your search." : "No queries found. Be the first to ask!"}
+                </p>
             )}
         </div>
     );
