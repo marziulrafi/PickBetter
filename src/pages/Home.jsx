@@ -131,7 +131,7 @@ const Home = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 md:gap-8">
                     <div className="bg-white shadow-md p-3 sm:p-4 md:p-6 rounded-lg">
                         <p className="text-gray-700 italic text-xs sm:text-sm md:text-base">“PickBetter helped me avoid a terrible laptop purchase. The community feedback is gold.”</p>
-                        <p className="text-right mt-2 sm:mt-4 font-semibold text-blue-600 text-xs sm:text-sm md:text-base">— Rafi, Student</p>
+                        <p className="text-right mt-2 sm:mt-4 font-semibold text-blue-600 text-xs sm:text-sm md:text-base">— Hassan, Student</p>
                     </div>
 
                     <div className="bg-white shadow-md p-3 sm:p-4 md:p-6 rounded-lg">
