@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router'; // Changed from 'react-router' to 'react-router-dom'
+import { Link } from 'react-router';
 
 const Queries = () => {
     const [queries, setQueries] = useState([]);
@@ -8,18 +8,17 @@ const Queries = () => {
     const [layout, setLayout] = useState(3);
 
     useEffect(() => {
-        fetch('http://localhost:3000/queries') // No change needed here, it will now fetch all queries
+        fetch('https://pick-better-server.vercel.app/queries')
             .then(res => res.json())
             .then(data => {
-                // The backend now sorts, so this client-side sort is technically redundant but harmless.
-                // You can remove it if you fully trust the backend sorting.
+                
                 const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setQueries(sorted);
                 setFilteredQueries(sorted);
             })
             .catch(error => {
                 console.error("Error fetching queries:", error);
-                // Handle error state if needed, e.g., setError(true);
+               
             });
     }, []);
 
@@ -32,8 +31,7 @@ const Queries = () => {
 
     const handleLayoutChange = (cols) => setLayout(cols);
 
-    // I've added a simple loading indicator in the return, as the 'Loading' component was not provided.
-    if (queries.length === 0 && !searchText) { // Check if initial fetch is pending and no search text
+    if (queries.length === 0 && !searchText) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <span className="loading loading-spinner loading-lg text-blue-500"></span>

@@ -13,7 +13,7 @@ const RecommendationsForMe = () => {
       try {
         const token = await getIdToken(user);
 
-        const queriesRes = await fetch(`http://localhost:3000/queries?email=${user.email}`, {
+        const queriesRes = await fetch(`https://pick-better-server.vercel.app/queries?email=${user.email}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -29,7 +29,7 @@ const RecommendationsForMe = () => {
           };
         });
 
-        const recRes = await fetch('http://localhost:3000/recommendations', {
+        const recRes = await fetch('https://pick-better-server.vercel.app/recommendations', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

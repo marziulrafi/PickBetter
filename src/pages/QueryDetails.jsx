@@ -37,7 +37,7 @@ const QueryDetails = () => {
                 const idToken = await getIdToken(user);
                // console.log("User email:", user.email, "ID Token:", idToken);
 
-                const queryRes = await fetch(`http://localhost:3000/queries/${id}`, {
+                const queryRes = await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
                     },
@@ -66,7 +66,7 @@ const QueryDetails = () => {
                 setQuery(queryData);
 
                
-                const recRes = await fetch(`http://localhost:3000/recommendations?queryId=${id}`, {
+                const recRes = await fetch(`https://pick-better-server.vercel.app/recommendations?queryId=${id}`, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
                     },
@@ -124,7 +124,7 @@ const QueryDetails = () => {
                 createdAt: new Date().toISOString(),
             };
 
-            const recRes = await fetch("http://localhost:3000/recommendations", {
+            const recRes = await fetch("https://pick-better-server.vercel.app/recommendations", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -138,7 +138,7 @@ const QueryDetails = () => {
                 throw new Error(`Recommendation submission failed: ${recRes.statusText} - ${errorData.message || ''}`);
             }
 
-            const patchRes = await fetch(`http://localhost:3000/increase-recommendation/${id}`, {
+            const patchRes = await fetch(`https://pick-better-server.vercel.app/increase-recommendation/${id}`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${idToken}`,
@@ -152,7 +152,7 @@ const QueryDetails = () => {
 
             setFormData({ title: "", productName: "", productImage: "", reason: "" });
 
-            const res = await fetch(`http://localhost:3000/recommendations?queryId=${id}`, {
+            const res = await fetch(`https://pick-better-server.vercel.app/recommendations?queryId=${id}`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },

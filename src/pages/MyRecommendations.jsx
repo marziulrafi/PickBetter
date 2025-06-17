@@ -14,7 +14,7 @@ const MyRecommendations = () => {
             try {
                 const token = await getIdToken(user);
 
-                const res = await fetch(`http://localhost:3000/recommendations?email=${user.email}`, {
+                const res = await fetch(`https://pick-better-server.vercel.app/recommendations?email=${user.email}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -45,7 +45,7 @@ const MyRecommendations = () => {
             try {
                 const token = await getIdToken(user);
 
-                await fetch(`http://localhost:3000/recommendations/${id}`, {
+                await fetch(`https://pick-better-server.vercel.app/recommendations/${id}`, {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`

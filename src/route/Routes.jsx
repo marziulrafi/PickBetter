@@ -35,7 +35,7 @@ const router = createBrowserRouter([
             {
                 path: "/queries",
                 element: <Queries />,
-                loader: () => fetch('http://localhost:3000/queries')
+                loader: () => fetch('https://pick-better-server.vercel.app/queries')
             },
             {
                 path: "/query-details/:id",

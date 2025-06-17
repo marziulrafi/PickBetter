@@ -24,7 +24,7 @@ const AddQuery = () => {
     try {
       const idToken = await getIdToken(user);
 
-      const res = await fetch("http://localhost:3000/queries", {
+      const res = await fetch("https://pick-better-server.vercel.app/queries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

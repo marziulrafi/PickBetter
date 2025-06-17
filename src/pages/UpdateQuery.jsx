@@ -16,7 +16,7 @@ const UpdateQuery = () => {
             if (!user) return;
             const token = await getIdToken(user);
 
-            const res = await fetch(`http://localhost:3000/queries/${id}`, {
+            const res = await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -42,7 +42,7 @@ const UpdateQuery = () => {
 
         const token = await getIdToken(user);
 
-        await fetch(`http://localhost:3000/queries/${id}`, {
+        await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const Home = () => {
         const fetchRecentQueries = async () => {
             try {
                 
-                const res = await fetch('http://localhost:3000/queries/recent');
+                const res = await fetch('https://pick-better-server.vercel.app/queries/recent');
                 
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);

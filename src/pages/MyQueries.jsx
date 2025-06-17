@@ -21,7 +21,7 @@ const MyQueries = () => {
             }
 
             const token = await auth.currentUser.getIdToken();
-            const res = await fetch(`http://localhost:3000/queries?email=${user.email}`, {
+            const res = await fetch(`https://pick-better-server.vercel.app/queries?email=${user.email}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -85,7 +85,7 @@ const MyQueries = () => {
         if (result.isConfirmed) {
             try {
                 const token = await auth.currentUser.getIdToken();
-                const res = await fetch(`http://localhost:3000/queries/${id}`, {
+                const res = await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`,
