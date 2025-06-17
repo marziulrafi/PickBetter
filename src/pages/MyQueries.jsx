@@ -15,8 +15,6 @@ const MyQueries = () => {
         }
     }, [user]);
 
-
-
     const handleDelete = (id) => {
         Swal.fire({
             title: 'Are you sure?',
@@ -27,6 +25,14 @@ const MyQueries = () => {
             cancelButtonText: 'Cancel',
             confirmButtonColor: '#e3342f',
             cancelButtonColor: '#6c757d',
+            width: '300px',
+            customClass: {
+                popup: 'p-4',
+                title: 'text-base font-bold',
+                content: 'text-sm',
+                confirmButton: 'px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700',
+                cancelButton: 'px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600'
+            }
         })
             .then(result => {
                 if (result.isConfirmed) {
@@ -39,62 +45,66 @@ const MyQueries = () => {
                                 text: 'Your query has been removed.',
                                 icon: 'success',
                                 showConfirmButton: false,
-                                timer: 2000
+                                timer: 2000,
+                                width: '300px',
+                                customClass: {
+                                    popup: 'p-4',
+                                    title: 'text-base font-bold',
+                                    content: 'text-sm'
+                                }
                             });
-
 
                             setMyQueries(prev => prev.filter(q => q._id !== id));
                         });
-
                 }
             });
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-6 sm:py-10">
             {myQueries.length > 0 && (
-                <div className="flex items-center justify-between bg-blue-100 p-6 rounded-xl mb-8">
-                    <h2 className="text-3xl font-bold text-blue-700 mr-9">My Product Queries</h2>
-                    <Link to="/add-query" className="bg-blue-600 font-bold text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+                <div className="flex flex-col sm:flex-row items-center justify-between bg-blue-100 p-4 sm:p-6 rounded-xl mb-4 sm:mb-8">
+                    <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold text-blue-700 mb-4 sm:mb-0 sm:mr-4">My Product Queries</h2>
+                    <Link to="/add-query" className="bg-blue-600 font-bold text-white px-3 sm:px-5 py-1 sm:py-2 text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition">
                         Add Query
                     </Link>
                 </div>
             )}
 
             {myQueries.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                     {myQueries.map(query => (
-                        <div key={query._id} className="flex flex-col justify-between rounded-2xl p-5 bg-white border shadow-sm hover:shadow-lg transition duration-300">
+                        <div key={query._id} className="flex flex-col justify-between rounded-2xl p-3 sm:p-5 bg-white border shadow-sm hover:shadow-lg transition duration-300">
                             <div>
-                                <h3 className="text-lg font-bold text-blue-900 mb-1">{query.queryTitle}</h3>
-                                <p className="text-gray-600 mb-2 line-clamp-2">{query.reason?.slice(0, 100)}...</p>
+                                <h3 className="text-sm sm:text-base md:text-lg font-bold text-blue-900 mb-1">{query.queryTitle}</h3>
+                                <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">{query.reason?.slice(0, 100)}...</p>
 
-                                <div className="flex flex-wrap gap-2 text-sm mb-4">
-                                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                                <div className="flex flex-wrap gap-1 sm:gap-2 text-xs sm:text-sm mb-2 sm:mb-4">
+                                    <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                                         Product: {query.productName}
                                     </span>
-                                    <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full">
+                                    <span className="bg-indigo-100 text-indigo-800 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                                         Brand: {query.productBrand}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="mt-auto space-y-2">
+                            <div className="mt-auto space-y-1 sm:space-y-2">
                                 <Link
                                     to={`/query-details/${query._id}`}
-                                    className="block text-center bg-sky-500 cursor-pointer text-white py-2 rounded-lg hover:bg-sky-600 transition">
+                                    className="block text-center bg-sky-500 cursor-pointer text-white py-1 sm:py-2 text-xs sm:text-sm rounded-lg hover:bg-sky-600 transition">
                                     View Details
                                 </Link>
 
                                 <Link
                                     to={`/update-query/${query._id}`}
-                                    className="block text-center bg-yellow-400 cursor-pointer text-white py-2 rounded-lg hover:bg-yellow-500 transition">
+                                    className="block text-center bg-yellow-400 cursor-pointer text-white py-1 sm:py-2 text-xs sm:text-sm rounded-lg hover:bg-yellow-500 transition">
                                     Update
                                 </Link>
 
                                 <button
                                     onClick={() => handleDelete(query._id)}
-                                    className="block w-full bg-rose-500 cursor-pointer text-white py-2 rounded-lg hover:bg-rose-600 transition">
+                                    className="block w-full bg-rose-500 cursor-pointer text-white py-1 sm:py-2 text-xs sm:text-sm rounded-lg hover:bg-rose-600 transition">
                                     Delete
                                 </button>
                             </div>
@@ -102,11 +112,11 @@ const MyQueries = () => {
                     ))}
                 </div>
             ) : (
-                <div className="text-center mt-20">
-                    <p className="text-gray-500 text-lg mb-4">No queries found. Ready to add your first one?</p>
+                <div className="text-center mt-10 sm:mt-20">
+                    <p className="text-gray-500 text-sm sm:text-base md:text-lg mb-2 sm:mb-4">No queries found. Ready to add your first one?</p>
                     <Link
                         to="/add-query"
-                        className="inline-block font-bold bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                        className="inline-block font-bold bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition">
                         Add Query
                     </Link>
                 </div>
