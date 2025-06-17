@@ -1,13 +1,14 @@
-import { use } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
+import { getIdToken } from "firebase/auth";
 
 const AddQuery = () => {
-  const { user } = use(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleAddQuery = e => {
+  const handleAddQuery = async e => {
     e.preventDefault();
 
     const form = e.target;
@@ -20,32 +21,36 @@ const AddQuery = () => {
     newQuery.createdAt = new Date().toISOString();
     newQuery.recommendationCount = 0;
 
-    fetch("http://localhost:3000/queries", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newQuery),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.insertedId || data.acknowledged) {
-          Swal.fire({
-            title: "✅ Success",
-            text: "Query added successfully!",
-            icon: "success",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+    try {
+      const idToken = await getIdToken(user);
 
-          form.reset();
-          navigate("/my-queries");
-        }
-      })
-      .catch((err) => {
-        console.error("Error submitting query:", err);
-        Swal.fire("Error", "Failed to add query.", "error");
+      const res = await fetch("http://localhost:3000/queries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(newQuery),
       });
+
+      const data = await res.json();
+
+      if (data.insertedId || data.acknowledged) {
+        Swal.fire({
+          title: "✅ Success",
+          text: "Query added successfully!",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        form.reset();
+        navigate("/my-queries");
+      }
+    } catch (err) {
+      console.error("Error submitting query:", err);
+      Swal.fire("Error", "Failed to add query.", "error");
+    }
   };
 
   return (
@@ -115,7 +120,6 @@ const AddQuery = () => {
             Add Query
           </button>
         </form>
-
       </div>
     </div>
   );

@@ -8,13 +8,27 @@ const Home = () => {
     const [recentQueries, setRecentQueries] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:3000/queries')
-            .then(res => res.json())
-            .then(data => {
-                const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setRecentQueries(sorted.slice(0, 6));
-            });
-    }, []);
+   
+        const fetchRecentQueries = async () => {
+            try {
+                
+                const res = await fetch('http://localhost:3000/queries');
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                
+                const data = await res.json();
+           
+                setRecentQueries(data);
+            } catch (error) {
+                console.error('Error fetching recent queries:', error);
+               
+            }
+        };
+
+        fetchRecentQueries();
+    }, []); 
 
     return (
         <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
@@ -22,7 +36,7 @@ const Home = () => {
                 spaceBetween={10}
                 slidesPerView={1}
                 loop={true}
-                autoplay={{ delay: 3000 }}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
                 modules={[Autoplay]}
                 className="rounded-xl overflow-hidden my-4 sm:my-6">
                 
@@ -80,21 +94,25 @@ const Home = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
-                    {recentQueries.map(query => (
-                        <div key={query._id} className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 md:p-6 hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-blue-100">
+                    {recentQueries.length > 0 ? (
+                        recentQueries.map(query => (
+                            <div key={query._id} className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 md:p-6 hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-blue-100">
 
-                            <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-blue-800">{query.queryTitle}</h3>
-                            <p className="text-gray-700 text-xs sm:text-sm md:text-base mb-1">
-                                <strong>Product:</strong> {query.productName}
-                            </p>
-                            <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-4">By {query.userName}</p>
+                                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-blue-800">{query.queryTitle}</h3>
+                                <p className="text-gray-700 text-xs sm:text-sm md:text-base mb-1">
+                                    <strong>Product:</strong> {query.productName}
+                                </p>
+                                <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-4">By {query.userName}</p>
 
-                            <Link
-                                to={`/query-details/${query._id}`}
-                                className="inline-block text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:brightness-110 transition">View Details →
-                            </Link>
-                        </div>
-                    ))}
+                                <Link
+                                    to={`/query-details/${query._id}`}
+                                    className="inline-block text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:brightness-110 transition">View Details →
+                                </Link>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-center text-gray-500 col-span-full">No recent queries available.</p>
+                    )}
                 </div>
             </section>
 
@@ -104,19 +122,19 @@ const Home = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8">
                     <div className="p-3 sm:p-4 md:p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4743/4743097.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Step 1" />
+                        <img src="https://cdn-icons-png.flaticon.com/512/4743/4743097.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Post a Query" />
                         <h4 className="font-bold text-sm sm:text-base md:text-lg">1. Post a Query</h4>
                         <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">Describe your issue or question about a product.</p>
                     </div>
 
                     <div className="p-3 sm:p-4 md:p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2107/2107957.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Step 2" />
+                        <img src="https://cdn-icons-png.flaticon.com/512/2107/2107957.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Get Recommendations" />
                         <h4 className="font-bold text-sm sm:text-base md:text-lg">2. Get Recommendations</h4>
                         <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">Others recommend better alternatives with reasons.</p>
                     </div>
 
                     <div className="p-3 sm:p-4 md:p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4436/4436481.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Step 3" />
+                        <img src="https://cdn-icons-png.flaticon.com/512/4436/4436481.png" className="w-10 sm:w-12 md:w-16 mx-auto mb-2 sm:mb-4" alt="Decide Smarter" />
                         <h4 className="font-bold text-sm sm:text-base md:text-lg">3. Decide Smarter</h4>
                         <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">Choose the product that fits you best with real feedback.</p>
                     </div>

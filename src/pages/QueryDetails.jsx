@@ -1,10 +1,13 @@
 import React, { use, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
+import Swal from 'sweetalert2';
 import { AuthContext } from '../provider/AuthProvider';
 import Loading from '../components/Loading';
+import { getIdToken } from 'firebase/auth';
 
 const QueryDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user } = use(AuthContext);
     const [query, setQuery] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
@@ -17,14 +20,80 @@ const QueryDetails = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:3000/queries/${id}`)
-            .then(res => res.json())
-            .then(data => setQuery(data));
+        if (!user) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unauthorized',
+                text: 'Please log in to view query details.',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+            navigate('/login');
+            return;
+        }
 
-        fetch(`http://localhost:3000/recommendations?queryId=${id}`)
-            .then(res => res.json())
-            .then(data => setRecommendations(data));
-    }, [id]);
+        const fetchData = async () => {
+            try {
+                const idToken = await getIdToken(user);
+               // console.log("User email:", user.email, "ID Token:", idToken);
+
+                const queryRes = await fetch(`http://localhost:3000/queries/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                });
+
+                if (queryRes.status === 403) {
+                    const errorData = await queryRes.json();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Access Denied',
+                        text: errorData.message || 'You cannot view this query. If you are the owner, check your login email.',
+                        timer: 3000,
+                        showConfirmButton: false,
+                    });
+                    navigate('/my-queries');
+                    return;
+                }
+
+                if (!queryRes.ok) {
+                    const errorData = await queryRes.json();
+                    throw new Error(`Query fetch failed: ${queryRes.statusText} - ${errorData.message || ''}`);
+                }
+
+                const queryData = await queryRes.json();
+                console.log("Query data:", queryData); 
+                setQuery(queryData);
+
+               
+                const recRes = await fetch(`http://localhost:3000/recommendations?queryId=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                });
+
+                if (!recRes.ok) {
+                    const errorData = await recRes.json();
+                    throw new Error(`Recommendations fetch failed: ${recRes.statusText} - ${errorData.message || ''}`);
+                }
+
+                const recData = await recRes.json();
+               // console.log("Recommendations data:", recData); 
+                if (Array.isArray(recData)) {
+                    setRecommendations(recData);
+                } else {
+                    console.error("Expected an array, got:", recData);
+                    setRecommendations([]);
+                }
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setQuery(null);
+                setRecommendations([]);
+            }
+        };
+
+        fetchData();
+    }, [id, user, navigate]);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -33,41 +102,88 @@ const QueryDetails = () => {
 
     const handleSubmit = async e => {
         e.preventDefault();
-
-        if (submitting) return;
+        if (submitting || !query) return;
         setSubmitting(true);
 
-        const recommendation = {
-            ...formData,
-            queryId: query._id,
-            queryTitle: query.queryTitle,
-            productName: formData.productName,
-            productImage: formData.productImage,
-            reason: formData.reason,
-            queryProductName: query.productName,
-            queryProductBrand: query.productBrand,
-            userEmail: query.userEmail,
-            userName: query.userName,
-            recommenderEmail: user.email,
-            recommenderName: user.displayName,
-            createdAt: new Date().toISOString()
-        };
+        try {
+            const idToken = await getIdToken(user);
 
-        await fetch('http://localhost:3000/recommendations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(recommendation)
-        });
+            const recommendation = {
+                ...formData,
+                queryId: query._id,
+                queryTitle: query.queryTitle,
+                productName: formData.productName,
+                productImage: formData.productImage,
+                reason: formData.reason,
+                queryProductName: query.productName,
+                queryProductBrand: query.productBrand,
+                userEmail: query.userEmail,
+                userName: query.userName,
+                recommenderEmail: user.email,
+                recommenderName: user.displayName,
+                createdAt: new Date().toISOString(),
+            };
 
-        await fetch(`http://localhost:3000/increase-recommendation/${id}`, {
-            method: 'PATCH'
-        });
+            const recRes = await fetch("http://localhost:3000/recommendations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`,
+                },
+                body: JSON.stringify(recommendation),
+            });
 
-        setFormData({ title: '', productName: '', productImage: '', reason: '' });
-        const res = await fetch(`http://localhost:3000/recommendations?queryId=${id}`);
-        const updated = await res.json();
-        setRecommendations(updated);
-        setSubmitting(false);
+            if (!recRes.ok) {
+                const errorData = await recRes.json();
+                throw new Error(`Recommendation submission failed: ${recRes.statusText} - ${errorData.message || ''}`);
+            }
+
+            const patchRes = await fetch(`http://localhost:3000/increase-recommendation/${id}`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (!patchRes.ok) {
+                const errorData = await patchRes.json();
+                throw new Error(`Recommendation count update failed: ${patchRes.statusText} - ${errorData.message || ''}`);
+            }
+
+            setFormData({ title: "", productName: "", productImage: "", reason: "" });
+
+            const res = await fetch(`http://localhost:3000/recommendations?queryId=${id}`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(`Recommendations fetch failed: ${res.statusText} - ${errorData.message || ''}`);
+            }
+
+            const updated = await res.json();
+            setRecommendations(Array.isArray(updated) ? updated : []);
+            Swal.fire({
+                icon: 'success',
+                title: 'Recommendation Added!',
+                text: 'Your recommendation has been submitted.',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        } catch (err) {
+            console.error("Error submitting recommendation:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to submit recommendation.',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (!query) return <Loading />;
@@ -75,7 +191,7 @@ const QueryDetails = () => {
     return (
         <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 md:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10">
             <div className="bg-white p-4 sm:p-6 rounded-xl shadow">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-2"> {query.queryTitle}</h1>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{query.queryTitle || 'N/A'}</h1>
 
                 {query.imageUrl && (
                     <img
@@ -85,9 +201,9 @@ const QueryDetails = () => {
                     />
                 )}
 
-                <p className="text-sm sm:text-base"><strong>Reason:</strong> {query.reason}</p>
-                <p className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-600">Product: {query.productName} | Brand: {query.productBrand}</p>
-                <p className="text-xs sm:text-sm text-gray-600">Asked by: {query.userName} ({query.userEmail})</p>
+                <p className="text-sm sm:text-base"><strong>Reason:</strong> {query.reason || 'N/A'}</p>
+                <p className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-600">Product: {query.productName || 'N/A'} | Brand: {query.productBrand || 'N/A'}</p>
+                <p className="text-xs sm:text-sm text-gray-600">Asked by: {query.userName || 'N/A'} ({query.userEmail || 'N/A'})</p>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-blue-50 p-4 sm:p-6 rounded-xl shadow space-y-3 sm:space-y-4">
@@ -132,7 +248,7 @@ const QueryDetails = () => {
                 <button
                     className="bg-blue-600 text-white cursor-pointer px-3 sm:px-5 py-1 sm:py-2 text-xs sm:text-sm rounded hover:bg-blue-700"
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !query}
                 >
                     {submitting ? "Submitting..." : "Add Recommendation"}
                 </button>

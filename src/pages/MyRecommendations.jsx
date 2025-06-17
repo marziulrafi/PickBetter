@@ -1,19 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
 import Swal from 'sweetalert2';
+import { getIdToken } from 'firebase/auth';
 
 const MyRecommendations = () => {
-    const { user } = React.useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [myRecs, setMyRecs] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/recommendations?email=${user.email}`)
-            .then(res => res.json())
-            .then(data => setMyRecs(data));
-    }, [user.email]);
+        const fetchData = async () => {
+            if (!user?.email) return;
 
-    const handleDelete = (id) => {
-        Swal.fire({
+            try {
+                const token = await getIdToken(user);
+
+                const res = await fetch(`http://localhost:3000/recommendations?email=${user.email}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = await res.json();
+                setMyRecs(data);
+            } catch (err) {
+                console.error('Failed to fetch recommendations:', err);
+            }
+        };
+
+        fetchData();
+    }, [user]);
+
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
             title: 'Are you sure?',
             text: "This will delete the recommendation permanently.",
             icon: 'warning',
@@ -21,18 +39,26 @@ const MyRecommendations = () => {
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!',
-        }).then(result => {
-            if (result.isConfirmed) {
-                fetch(`http://localhost:3000/recommendations/${id}`, {
-                    method: 'DELETE',
-                })
-                    .then(res => res.json())
-                    .then(() => {
-                        Swal.fire('Deleted!', 'Your recommendation has been removed.', 'success');
-                        setMyRecs(prev => prev.filter(rec => rec._id !== id));
-                    });
-            }
         });
+
+        if (result.isConfirmed) {
+            try {
+                const token = await getIdToken(user);
+
+                await fetch(`http://localhost:3000/recommendations/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                Swal.fire('Deleted!', 'Your recommendation has been removed.', 'success');
+                setMyRecs(prev => prev.filter(rec => rec._id !== id));
+            } catch (err) {
+                console.error('Error deleting recommendation:', err);
+                Swal.fire('Error', 'Failed to delete recommendation.', 'error');
+            }
+        }
     };
 
     return (
@@ -40,7 +66,9 @@ const MyRecommendations = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center text-blue-700">My Recommendations</h2>
 
             {myRecs.length === 0 ? (
-                <p className="text-center font-semibold text-gray-500 text-sm sm:text-base">You haven't made any recommendations yet.</p>
+                <p className="text-center font-semibold text-gray-500 text-sm sm:text-base">
+                    You haven't made any recommendations yet.
+                </p>
             ) : (
                 <div className="overflow-x-auto rounded-xl shadow-lg">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -56,18 +84,22 @@ const MyRecommendations = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {myRecs.map(rec => (
                                 <tr key={rec._id} className="hover:bg-gray-50 transition">
-                                    <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[150px] sm:max-w-[200px]">{rec.title}</td>
-
+                                    <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[150px] sm:max-w-[200px]">
+                                        {rec.title}
+                                    </td>
                                     <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-3">
                                         <img
                                             src={rec.productImage}
                                             alt=""
                                             className="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12 object-cover rounded"
                                         />
-                                        <span className="text-xs sm:text-sm text-gray-800 truncate max-w-[120px] sm:max-w-[150px]">{rec.productName}</span>
+                                        <span className="text-xs sm:text-sm text-gray-800 truncate max-w-[120px] sm:max-w-[150px]">
+                                            {rec.productName}
+                                        </span>
                                     </td>
-
-                                    <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-700 truncate max-w-[120px] sm:max-w-[150px]">{rec.queryTitle}</td>
+                                    <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-700 truncate max-w-[120px] sm:max-w-[150px]">
+                                        {rec.queryTitle}
+                                    </td>
                                     <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-600 whitespace-nowrap">
                                         {new Date(rec.createdAt).toLocaleString()}
                                     </td>

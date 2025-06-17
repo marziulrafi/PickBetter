@@ -1,16 +1,26 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
+import { getIdToken } from 'firebase/auth';
 
 const RecommendationsForMe = () => {
   const { user } = useContext(AuthContext);
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    if (!user?.email) return;
+    const fetchData = async () => {
+      if (!user?.email) return;
 
-    fetch(`http://localhost:3000/queries?email=${user.email}`)
-      .then(res => res.json())
-      .then(async queries => {
+      try {
+        const token = await getIdToken(user);
+
+        const queriesRes = await fetch(`http://localhost:3000/queries?email=${user.email}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const queries = await queriesRes.json();
+
         const queryIdMap = {};
         queries.forEach(q => {
           queryIdMap[q._id] = {
@@ -19,7 +29,12 @@ const RecommendationsForMe = () => {
           };
         });
 
-        const recRes = await fetch('http://localhost:3000/recommendations');
+        const recRes = await fetch('http://localhost:3000/recommendations', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         const allRecs = await recRes.json();
 
         const myRecs = allRecs
@@ -31,7 +46,12 @@ const RecommendationsForMe = () => {
           }));
 
         setRecommendations(myRecs);
-      });
+      } catch (err) {
+        console.error('Failed to load recommendations:', err);
+      }
+    };
+
+    fetchData();
   }, [user]);
 
   return (

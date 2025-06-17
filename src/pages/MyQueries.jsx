@@ -2,21 +2,68 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../provider/AuthProvider';
+import { getAuth } from 'firebase/auth';
+import app from '../firebase.config';
+
 
 const MyQueries = () => {
     const { user } = useContext(AuthContext);
     const [myQueries, setMyQueries] = useState([]);
+    const auth = getAuth(app);
+
+    const fetchQueries = async () => {
+        try {
+
+            if (!user || !user.email) {
+                console.warn("User or user email not available. Cannot fetch queries.");
+                setMyQueries([]); 
+                return;
+            }
+
+            const token = await auth.currentUser.getIdToken();
+            const res = await fetch(`http://localhost:3000/queries?email=${user.email}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) {
+            
+                const errorData = await res.json();
+                throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+            }
+
+            const data = await res.json();
+            setMyQueries(data);
+        } catch (error) {
+            console.error('Error fetching queries:', error);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: `Failed to load your queries: ${error.message || 'Please try again.'}`,
+                width: '300px',
+                customClass: {
+                    popup: 'p-4',
+                    title: 'text-base font-bold',
+                    content: 'text-sm',
+                }
+            });
+        }
+    };
 
     useEffect(() => {
+        
         if (user?.email) {
-            fetch(`http://localhost:3000/queries?email=${user.email}`)
-                .then(res => res.json())
-                .then(data => setMyQueries(data));
+            fetchQueries();
+        } else {
+            
+            setMyQueries([]);
         }
     }, [user]);
 
-    const handleDelete = (id) => {
-        Swal.fire({
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
             title: 'Are you sure?',
             text: 'This will permanently delete your query.',
             icon: 'warning',
@@ -33,31 +80,69 @@ const MyQueries = () => {
                 confirmButton: 'px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700',
                 cancelButton: 'px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600'
             }
-        })
-            .then(result => {
-                if (result.isConfirmed) {
-                    fetch(`http://localhost:3000/queries/${id}`, {
-                        method: 'DELETE'
-                    }).then(res => res.json())
-                        .then(() => {
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Your query has been removed.',
-                                icon: 'success',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                width: '300px',
-                                customClass: {
-                                    popup: 'p-4',
-                                    title: 'text-base font-bold',
-                                    content: 'text-sm'
-                                }
-                            });
+        });
 
-                            setMyQueries(prev => prev.filter(q => q._id !== id));
-                        });
+        if (result.isConfirmed) {
+            try {
+                const token = await auth.currentUser.getIdToken();
+                const res = await fetch(`http://localhost:3000/queries/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
                 }
-            });
+
+                const data = await res.json();
+                if (data?.deletedCount > 0 || data?.acknowledged) {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'Your query has been removed.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        width: '300px',
+                        customClass: {
+                            popup: 'p-4',
+                            title: 'text-base font-bold',
+                            content: 'text-sm',
+                        }
+                    });
+                    setMyQueries(prev => prev.filter(q => q._id !== id));
+                } else {
+                    Swal.fire({
+                        title: 'Failed!',
+                        text: 'Could not delete the query.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        width: '300px',
+                        customClass: {
+                            popup: 'p-4',
+                            title: 'text-base font-bold',
+                            content: 'text-sm',
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error deleting query:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: `Failed to delete query: ${error.message || 'Please try again.'}`,
+                    width: '300px',
+                    customClass: {
+                        popup: 'p-4',
+                        title: 'text-base font-bold',
+                        content: 'text-sm',
+                    }
+                });
+            }
+        }
     };
 
     return (
