@@ -4,6 +4,9 @@ import Loading from '../components/Loading';
 
 const Queries = () => {
     const [queries, setQueries] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [filteredQueries, setFilteredQueries] = useState([]);
+    const [layout, setLayout] = useState(3);
 
     useEffect(() => {
         fetch('http://localhost:3000/queries')
@@ -11,16 +14,36 @@ const Queries = () => {
             .then(data => {
                 const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setQueries(sorted);
+                setFilteredQueries(sorted);
             });
     }, []);
+
+    useEffect(() => {
+        const filtered = queries.filter(query =>
+            query.productName.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setFilteredQueries(filtered);
+    }, [searchText, queries]);
+
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
             <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 font-bold text-center text-blue-700">All Community Queries</h2>
 
-            {queries.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {queries.map(query => (
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                <input
+                    type="text"
+                    placeholder="Search by product name..."
+                    value={searchText}
+                    onChange={e => setSearchText(e.target.value)}
+                    className="input input-bordered w-full sm:w-1/2"
+                />
+
+            </div>
+
+            {filteredQueries.length > 0 ? (
+                <div className={`grid grid-cols-1 ${layout >= 2 ? 'md:grid-cols-2' : ''} ${layout === 3 ? 'lg:grid-cols-3' : layout === 2 ? 'lg:grid-cols-2' : ''} gap-8`}>
+                    {filteredQueries.map(query => (
                         <div key={query._id} className="rounded-2xl p-6 bg-gradient-to-br from-blue-50 to-white border border-blue-200 hover:shadow-xl transition duration-300 flex flex-col justify-between">
                             <h3 className="text-base sm:text-lg md:text-xl font-semibold text-blue-900 mb-2">{query.queryTitle}</h3>
                             <p className="text-xs sm:text-sm md:text-base text-gray-700 mb-3 line-clamp-3">{query.reason?.slice(0, 100)}...</p>
