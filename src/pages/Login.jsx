@@ -10,7 +10,7 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
 
-    const handleLogin = (e) => {
+    const handleLogin = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;

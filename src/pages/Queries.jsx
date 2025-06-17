@@ -25,6 +25,7 @@ const Queries = () => {
         setFilteredQueries(filtered);
     }, [searchText, queries]);
 
+    const handleLayoutChange = (cols) => setLayout(cols);
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
@@ -38,6 +39,16 @@ const Queries = () => {
                     onChange={e => setSearchText(e.target.value)}
                     className="input input-bordered w-full sm:w-1/2"
                 />
+
+
+                <div className="flex gap-2">
+                    <button onClick={() => handleLayoutChange(1)} className={`btn btn-sm ${layout === 1 ? 'btn-primary' : 'btn-outline'}`}>1 Col</button>
+
+                    <button onClick={() => handleLayoutChange(2)} className={`btn btn-sm hidden md:inline-flex ${layout === 2 ? 'btn-primary' : 'btn-outline'}`}>2 Col</button>
+
+                    <button onClick={() => handleLayoutChange(3)} className={`btn btn-sm hidden lg:inline-flex ${layout === 3 ? 'btn-primary' : 'btn-outline'}`}>3 Col</button>
+                </div>
+
 
             </div>
 
@@ -61,8 +72,7 @@ const Queries = () => {
 
                             <Link
                                 to={`/query-details/${query._id}`}
-                                className="inline-block mt-auto text-center bg-blue-600 text-white text-xs sm:text-sm md:text-base px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                            >
+                                className="inline-block mt-auto text-center bg-blue-600 text-white text-xs sm:text-sm md:text-base px-4 py-2 rounded-lg hover:bg-blue-700 transition">
                                 Recommend 💡
                             </Link>
                         </div>

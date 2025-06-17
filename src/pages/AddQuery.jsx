@@ -7,7 +7,7 @@ const AddQuery = () => {
   const { user } = use(AuthContext);
   const navigate = useNavigate();
 
-  const handleAddQuery = (e) => {
+  const handleAddQuery = e => {
     e.preventDefault();
 
     const form = e.target;
@@ -115,7 +115,7 @@ const AddQuery = () => {
             Add Query
           </button>
         </form>
-        
+
       </div>
     </div>
   );

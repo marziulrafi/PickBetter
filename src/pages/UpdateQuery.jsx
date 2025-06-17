@@ -14,7 +14,7 @@ const UpdateQuery = () => {
             .then(data => setQueryData(data));
     }, [id]);
 
-    const handleUpdate = (e) => {
+    const handleUpdate = e => {
         e.preventDefault();
         const form = e.target;
 

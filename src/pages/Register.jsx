@@ -10,7 +10,7 @@ const Register = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
 
-    const handleRegister = (e) => {
+    const handleRegister = e => {
         e.preventDefault();
 
         const name = e.target.name.value;
