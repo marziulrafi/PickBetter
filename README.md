@@ -62,7 +62,7 @@ npm install react react-dom react-router firebase
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/marziulrafi/PickBetter.git
-   cd QuestWork
+   cd PickBetter
 2. **Install Dependencies**
    ```bash
    npm install
