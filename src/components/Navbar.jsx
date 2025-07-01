@@ -18,6 +18,7 @@ const Navbar = () => {
     const userLinks = (
         <>
             <li><NavLink to="/" className={baseLinkClass}>Home</NavLink></li>
+            <li><NavLink to="/add-query" className={baseLinkClass}>Add Query</NavLink></li>
             <li><NavLink to="/queries" className={baseLinkClass}>Queries</NavLink></li>
             <li><NavLink to="/recommendations-for-me" className={baseLinkClass}>Recommendations For Me</NavLink></li>
             <li><NavLink to="/my-queries" className={baseLinkClass}>My Queries</NavLink></li>
@@ -58,7 +59,7 @@ const Navbar = () => {
                 </ul>
             </div>
 
-     
+
             <div className="navbar-end">
                 {user ? (
                     <button

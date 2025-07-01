@@ -3,32 +3,34 @@ import { Link } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Autoplay } from 'swiper/modules';
+import CountUp from 'react-countup';
+import Stats from '../components/Stats';
 
 const Home = () => {
     const [recentQueries, setRecentQueries] = useState([]);
 
     useEffect(() => {
-   
+
         const fetchRecentQueries = async () => {
             try {
-                
+
                 const res = await fetch('https://pick-better-server.vercel.app/queries/recent');
-                
+
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
-                
+
                 const data = await res.json();
-           
+
                 setRecentQueries(data);
             } catch (error) {
                 console.error('Error fetching recent queries:', error);
-               
+
             }
         };
 
         fetchRecentQueries();
-    }, []); 
+    }, []);
 
     return (
         <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
@@ -39,10 +41,11 @@ const Home = () => {
                 autoplay={{ delay: 3000, disableOnInteraction: false }}
                 modules={[Autoplay]}
                 className="rounded-xl overflow-hidden my-4 sm:my-6">
-                
+
                 <SwiperSlide>
                     <div className="relative w-full min-h-[250px] max-h-[450px] sm:min-h-[300px] lg:min-h-[400px] bg-cover bg-center" style={{
-                        backgroundImage: `url('https://images.unsplash.com/photo-1665686310429-ee43624978fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`}}>
+                        backgroundImage: `url('https://images.unsplash.com/photo-1665686310429-ee43624978fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`
+                    }}>
 
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
                         <div className="absolute inset-y-0 left-0 flex items-center px-2 sm:px-4 md:px-6 lg:px-8">
@@ -56,7 +59,8 @@ const Home = () => {
 
                 <SwiperSlide>
                     <div className="relative w-full min-h-[250px] max-h-[450px] sm:min-h-[300px] lg:min-h-[400px] bg-cover bg-center" style={{
-                        backgroundImage: `url('https://images.unsplash.com/photo-1722153297252-8fb1645f5bfb?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`}}>
+                        backgroundImage: `url('https://images.unsplash.com/photo-1722153297252-8fb1645f5bfb?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`
+                    }}>
 
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
                         <div className="absolute inset-y-0 left-0 flex items-center px-2 sm:px-4 md:px-6 lg:px-8">
@@ -71,7 +75,8 @@ const Home = () => {
                 <SwiperSlide>
                     <div
                         className="relative w-full min-h-[250px] max-h-[450px] sm:min-h-[300px] lg:min-h-[400px] bg-cover bg-center" style={{
-                            backgroundImage: `url('https://images.unsplash.com/photo-1524289286702-f07229da36f5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`}}>
+                            backgroundImage: `url('https://images.unsplash.com/photo-1524289286702-f07229da36f5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`
+                        }}>
 
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
 
@@ -93,20 +98,38 @@ const Home = () => {
                     Recent Queries
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {recentQueries.length > 0 ? (
-                        recentQueries.map(query => (
-                            <div key={query._id} className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 md:p-6 hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-blue-100">
+                        recentQueries.slice(0, 4).map(query => (
+                            <div
+                                key={query._id}
+                                className="bg-white flex flex-col justify-between rounded-2xl shadow-lg p-4 hover:shadow-2xl transition duration-300 border border-blue-100 h-full"
+                            >
+                                <div>
+                                    <img
+                                        src={query.imageUrl || "https://via.placeholder.com/300x200.png?text=No+Image"}
+                                        alt={query.queryTitle}
+                                        className="w-full h-40 object-cover rounded-lg mb-3"
+                                    />
 
-                                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 text-blue-800">{query.queryTitle}</h3>
-                                <p className="text-gray-700 text-xs sm:text-sm md:text-base mb-1">
-                                    <strong>Product:</strong> {query.productName}
-                                </p>
-                                <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-4">By {query.userName}</p>
+                                    <h3 className="text-base sm:text-lg font-bold text-blue-800 mb-1">
+                                        {query.queryTitle}
+                                    </h3>
+
+                                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                                        {query.reason?.slice(0, 80)}...
+                                    </p>
+
+                                    <p className="text-gray-400 text-xs mb-3">
+                                        Product: <span className="font-medium text-gray-600">{query.productName}</span>
+                                    </p>
+                                </div>
 
                                 <Link
                                     to={`/query-details/${query._id}`}
-                                    className="inline-block text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:brightness-110 transition">View Details →
+                                    className="inline-block mt-auto text-center text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 rounded-full hover:brightness-110 transition"
+                                >
+                                    See More
                                 </Link>
                             </div>
                         ))
@@ -116,7 +139,9 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="bg-gradient-to-br from-blue-50 to-purple-100 p-4 sm:p-6 md:p-10 rounded-xl my-8 sm:my-12 animate__animated animate__fadeInUp">
+
+
+            <section className="bg-gradient-to-br from-blue-50 to-purple-100 p-4 sm:p-6 md:p-10 rounded-xl my-8 sm:my-12 animate__animated animate__fadeInUp" data-aos="zoom-in">
 
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-700 mb-4 sm:mb-6 md:mb-10 text-center">How It Works</h2>
 
@@ -141,6 +166,9 @@ const Home = () => {
 
                 </div>
             </section>
+
+
+            <Stats />
 
             <section className="bg-gradient-to-r from-purple-100 to-blue-100 p-4 sm:p-6 md:p-10 rounded-xl my-8 sm:my-12 animate__animated animate__fadeInRight">
 

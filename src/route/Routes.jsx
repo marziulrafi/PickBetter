@@ -14,6 +14,7 @@ import QueryDetails from "../pages/QueryDetails";
 import RecommendationsForMe from "../pages/RecommendationsForMe";
 import MyRecommendations from "../pages/MyRecommendations";
 import UpdateQuery from "../pages/UpdateQuery";
+import NotFound from "../components/NotFound";
 
 const router = createBrowserRouter([
     {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             {
                 path: "/recommendations-for-me",
                 element: <PrivateRoute><RecommendationsForMe /></PrivateRoute>
+            },
+            {
+                path: '/*',
+                element: <NotFound />
             }
         ]
     },
