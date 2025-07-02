@@ -2,7 +2,9 @@
 
 **PickBetter** is an intelligent product recommendation platform where users can post their product-related queries and receive helpful suggestions from others. Built with a secure and interactive interface, it promotes community-driven decision-making by allowing users to recommend alternatives with reasoning and images.
 
-🔗 **Live Site URL:** [PickBetter Live Demo](https://marziul-pickbetter.web.app/)  
+🔗 **Live Site URL:** [PickBetter Live Demo](https://marziul-pickbetter.web.app/)
+
+🔗 **Server Side Repository:** [PickBetter Server Side](https://github.com/marziulrafi/PickBetter-Server)
 
 
 ---
