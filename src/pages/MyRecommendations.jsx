@@ -66,8 +66,10 @@ const MyRecommendations = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center text-blue-700">My Recommendations</h2>
 
             {myRecs.length === 0 ? (
-                <p className="text-center font-semibold text-gray-500 text-sm sm:text-base">
-                    You haven't made any recommendations yet.
+                <p className="text-center font-semibold text-gray-500 text-sm sm:text-base animate-fadeIn">
+                    <span className="inline-block px-4 py-2 bg-gray-100 rounded-full shadow-sm">
+                        ✨ You haven’t made any recommendations yet.
+                    </span>
                 </p>
             ) : (
                 <div className="overflow-x-auto rounded-xl shadow-lg">
