@@ -84,7 +84,11 @@ const RecommendationsForMe = () => {
           </table>
         </div>
       ) : (
-        <p className="text-gray-500 text-center mt-8 sm:mt-16 text-sm sm:text-base md:text-lg">You haven't received any recommendations yet</p>
+        <p className="text-gray-500 text-center mt-8 sm:mt-16 text-sm sm:text-base md:text-lg italic animate-fadeIn">
+          <span className="inline-block px-4 py-2 bg-gray-100 rounded-full shadow-sm">
+            🌱 You haven’t received any recommendations yet
+          </span>
+        </p>
       )}
     </div>
   );
