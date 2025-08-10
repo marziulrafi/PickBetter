@@ -4,8 +4,6 @@ import {
 } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
 import Queries from "../pages/Queries";
 import MyQueries from "../pages/MyQueries";
 import PrivateRoute from "../provider/PrivateRoute";
@@ -15,6 +13,7 @@ import RecommendationsForMe from "../pages/RecommendationsForMe";
 import MyRecommendations from "../pages/MyRecommendations";
 import UpdateQuery from "../pages/UpdateQuery";
 import NotFound from "../components/NotFound";
+import Authentication from "../pages/Authentication";
 
 const router = createBrowserRouter([
     {
@@ -26,12 +25,8 @@ const router = createBrowserRouter([
                 element: <Home />
             },
             {
-                path: "/login",
-                element: <Login />
-            },
-            {
-                path: "/register",
-                element: <Register />
+                path: "/join",
+                element: <Authentication/>
             },
             {
                 path: "/queries",

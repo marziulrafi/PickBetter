@@ -43,7 +43,7 @@ const Navbar = () => {
                     >
                         {user ? userLinks : <>
                             {links}
-                            <li><NavLink to="/login" className={baseLinkClass}>Login</NavLink></li>
+                            <li><NavLink to="/join" className={baseLinkClass}>Join</NavLink></li>
                         </>}
                     </ul>
                 </div>
@@ -69,8 +69,8 @@ const Navbar = () => {
                         Logout
                     </button>
                 ) : (
-                    <Link to="/login" className="btn bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110 transition">
-                        Login
+                    <Link to="/join" className="btn bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110 transition">
+                        Join
                     </Link>
                 )}
             </div>
