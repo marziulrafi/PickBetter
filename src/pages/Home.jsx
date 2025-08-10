@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Autoplay } from 'swiper/modules';
-import CountUp from 'react-countup';
 import Stats from '../components/Stats';
 
 const Home = () => {
@@ -129,13 +128,17 @@ const Home = () => {
                                     to={`/query-details/${query._id}`}
                                     className="inline-block mt-auto text-center text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 rounded-full hover:brightness-110 transition"
                                 >
-                                    See More
+                                    Details
                                 </Link>
                             </div>
                         ))
                     ) : (
                         <p className="text-center text-gray-500 col-span-full">No recent queries available.</p>
                     )}
+                </div>
+
+                <div>
+                    <Link to='/queries' className='text-center flex justify-center mt-6 btn text-xl font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-full -mb-2'>See All</Link>
                 </div>
             </section>
 

@@ -28,14 +28,14 @@ const QueryDetails = () => {
                 timer: 2000,
                 showConfirmButton: false,
             });
-            navigate('/login');
+            navigate('/join');
             return;
         }
 
         const fetchData = async () => {
             try {
                 const idToken = await getIdToken(user);
-               // console.log("User email:", user.email, "ID Token:", idToken);
+                // console.log("User email:", user.email, "ID Token:", idToken);
 
                 const queryRes = await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
                     headers: {
@@ -62,10 +62,10 @@ const QueryDetails = () => {
                 }
 
                 const queryData = await queryRes.json();
-                console.log("Query data:", queryData); 
+                console.log("Query data:", queryData);
                 setQuery(queryData);
 
-               
+
                 const recRes = await fetch(`https://pick-better-server.vercel.app/recommendations?queryId=${id}`, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
@@ -78,7 +78,7 @@ const QueryDetails = () => {
                 }
 
                 const recData = await recRes.json();
-               // console.log("Recommendations data:", recData); 
+                // console.log("Recommendations data:", recData); 
                 if (Array.isArray(recData)) {
                     setRecommendations(recData);
                 } else {

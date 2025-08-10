@@ -26,7 +26,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/join",
-                element: <Authentication/>
+                element: <Authentication />
             },
             {
                 path: "/queries",
