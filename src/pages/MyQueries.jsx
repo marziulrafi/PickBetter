@@ -16,7 +16,7 @@ const MyQueries = () => {
 
             if (!user || !user.email) {
                 console.warn("User or user email not available. Cannot fetch queries.");
-                setMyQueries([]); 
+                setMyQueries([]);
                 return;
             }
 
@@ -28,7 +28,7 @@ const MyQueries = () => {
             });
 
             if (!res.ok) {
-            
+
                 const errorData = await res.json();
                 throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
             }
@@ -37,7 +37,7 @@ const MyQueries = () => {
             setMyQueries(data);
         } catch (error) {
             console.error('Error fetching queries:', error);
-            
+
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -53,11 +53,11 @@ const MyQueries = () => {
     };
 
     useEffect(() => {
-        
+
         if (user?.email) {
             fetchQueries();
         } else {
-            
+
             setMyQueries([]);
         }
     }, [user]);
@@ -197,14 +197,18 @@ const MyQueries = () => {
                     ))}
                 </div>
             ) : (
-                <div className="text-center mt-10 sm:mt-20">
-                    <p className="text-gray-500 text-sm sm:text-base md:text-lg mb-2 sm:mb-4">No queries found. Ready to add your first one?</p>
+                <div className="text-center mt-10 sm:mt-20 animate-fadeIn">
+                    <p className="text-gray-500 text-sm sm:text-base md:text-lg mb-3 sm:mb-5">
+                        🚀 No queries found. Ready to start your first one?
+                    </p>
                     <Link
                         to="/add-query"
-                        className="inline-block font-bold bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition">
-                        Add Query
+                        className="inline-block font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 sm:px-7 py-2.5 sm:py-3.5 text-sm sm:text-base rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300"
+                    >
+                        ➕ Add Query
                     </Link>
                 </div>
+
             )}
         </div>
     );
