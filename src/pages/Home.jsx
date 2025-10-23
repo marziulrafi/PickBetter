@@ -157,7 +157,13 @@ const Home = () => {
                                     >
                                         Details
                                     </Link>
-                                    
+                                    <button
+                                        onClick={() => copyQueryLink(query._id)}
+                                        className="bg-gray-500 cursor-pointer hover:bg-gray-600 text-white px-3 py-2 rounded-full transition text-sm"
+                                        title="Copy link to share"
+                                    >
+                                        📋
+                                    </button>
                                 </div>
                             </div>
                         ))

@@ -219,7 +219,13 @@ const QueryDetails = () => {
             <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow transition-colors duration-300">
                 <div className="flex justify-between items-start mb-2">
                     <h1 className="text-lg sm:text-xl md:text-2xl font-bold dark:text-white">{query.queryTitle || 'N/A'}</h1>
-                    
+                    <button
+                        onClick={copyQueryLink}
+                        className="bg-gray-500 cursor-pointer hover:bg-gray-600 text-white px-3 py-2 rounded-lg transition text-sm ml-4"
+                        title="Copy link to share"
+                    >
+                        📋 Copy Link
+                    </button>
                 </div>
 
                 {query.imageUrl && (

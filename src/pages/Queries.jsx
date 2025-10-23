@@ -13,28 +13,27 @@ const Queries = () => {
         fetch('https://pick-better-server.vercel.app/queries')
             .then(res => res.json())
             .then(data => {
-                
+
                 const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setQueries(sorted);
                 setFilteredQueries(sorted);
             })
             .catch(error => {
                 console.error("Error fetching queries:", error);
-               
+
             });
     }, []);
 
     useEffect(() => {
         const filtered = queries.filter(query => {
             const matchesSearch = query.productName.toLowerCase().includes(searchText.toLowerCase()) ||
-                                 query.queryTitle.toLowerCase().includes(searchText.toLowerCase());
+                query.queryTitle.toLowerCase().includes(searchText.toLowerCase());
             const matchesBrand = selectedBrand === '' || query.productBrand.toLowerCase() === selectedBrand.toLowerCase();
             return matchesSearch && matchesBrand;
         });
         setFilteredQueries(filtered);
     }, [searchText, selectedBrand, queries]);
 
-    // Get unique brands for the dropdown
     const uniqueBrands = [...new Set(queries.map(query => query.productBrand))].filter(Boolean).sort();
 
     const handleLayoutChange = (cols) => setLayout(cols);
@@ -85,7 +84,7 @@ const Queries = () => {
                         onChange={e => setSearchText(e.target.value)}
                         className="input input-bordered flex-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
-                    
+
                     
                 </div>
 
@@ -120,7 +119,13 @@ const Queries = () => {
                                     className="flex-1 text-center bg-blue-600 text-white text-xs sm:text-sm md:text-base px-4 py-2 rounded-lg hover:bg-blue-700 transition">
                                     Recommend 💡
                                 </Link>
-                                
+                                <button
+                                        onClick={() => copyQueryLink(query._id)}
+                                        className="bg-gray-500 cursor-pointer hover:bg-gray-600 text-white px-3 py-2 rounded-full transition text-sm"
+                                        title="Copy link to share"
+                                    >
+                                        📋
+                                    </button>
                             </div>
                         </div>
                     ))}
