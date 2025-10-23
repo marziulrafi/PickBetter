@@ -6,7 +6,7 @@ import Loading from '../components/Loading';
 
 const MainLayout = () => {
     return (
-        <div className='flex flex-col min-h-screen gap-10'>
+        <div className='flex flex-col min-h-screen gap-10 bg-white dark:bg-gray-900 transition-colors duration-300'>
             <Navbar />
             <Suspense fallback={<Loading />}>
                 <Outlet />

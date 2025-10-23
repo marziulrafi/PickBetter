@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { AuthContext } from '../provider/AuthProvider';
 import Loading from '../components/Loading';
 import { getIdToken } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const QueryDetails = () => {
     const { id } = useParams();
@@ -186,12 +187,40 @@ const QueryDetails = () => {
         }
     };
 
+    const copyQueryLink = async () => {
+        const queryUrl = window.location.href;
+        try {
+            await navigator.clipboard.writeText(queryUrl);
+            toast.success('Query link copied to clipboard!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            toast.error('Failed to copy link', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    };
+
     if (!query) return <Loading />;
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 md:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{query.queryTitle || 'N/A'}</h1>
+            <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow transition-colors duration-300">
+                <div className="flex justify-between items-start mb-2">
+                    <h1 className="text-lg sm:text-xl md:text-2xl font-bold dark:text-white">{query.queryTitle || 'N/A'}</h1>
+                    
+                </div>
 
                 {query.imageUrl && (
                     <img
@@ -201,9 +230,9 @@ const QueryDetails = () => {
                     />
                 )}
 
-                <p className="text-sm sm:text-base"><strong>Reason:</strong> {query.reason || 'N/A'}</p>
-                <p className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-600">Product: {query.productName || 'N/A'} | Brand: {query.productBrand || 'N/A'}</p>
-                <p className="text-xs sm:text-sm text-gray-600">Asked by: {query.userName || 'N/A'} ({query.userEmail || 'N/A'})</p>
+                <p className="text-sm sm:text-base dark:text-gray-300"><strong>Reason:</strong> {query.reason || 'N/A'}</p>
+                <p className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-600 dark:text-gray-400">Product: {query.productName || 'N/A'} | Brand: {query.productBrand || 'N/A'}</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Asked by: {query.userName || 'N/A'} ({query.userEmail || 'N/A'})</p>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-blue-50 p-4 sm:p-6 rounded-xl shadow space-y-3 sm:space-y-4">

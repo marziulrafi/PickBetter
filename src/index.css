@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@variant dark (&:is(.dark *));
+
 @keyframes fadeIn {
     from {
         opacity: 0;
