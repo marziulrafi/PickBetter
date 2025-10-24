@@ -36,8 +36,7 @@ const QueryDetails = () => {
         const fetchData = async () => {
             try {
                 const idToken = await getIdToken(user);
-                // console.log("User email:", user.email, "ID Token:", idToken);
-
+               
                 const queryRes = await fetch(`https://pick-better-server.vercel.app/queries/${id}`, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
@@ -79,7 +78,6 @@ const QueryDetails = () => {
                 }
 
                 const recData = await recRes.json();
-                // console.log("Recommendations data:", recData); 
                 if (Array.isArray(recData)) {
                     setRecommendations(recData);
                 } else {

@@ -85,7 +85,16 @@ const Queries = () => {
                         className="input input-bordered flex-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
 
-                    
+                    <select
+                        value={selectedBrand}
+                        onChange={e => setSelectedBrand(e.target.value)}
+                        className="select select-bordered w-full sm:w-48 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">All Brands</option>
+                        {uniqueBrands.map(brand => (
+                            <option key={brand} value={brand}>{brand}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="flex gap-2">
@@ -120,12 +129,12 @@ const Queries = () => {
                                     Recommend 💡
                                 </Link>
                                 <button
-                                        onClick={() => copyQueryLink(query._id)}
-                                        className="bg-gray-500 cursor-pointer hover:bg-gray-600 text-white px-3 py-2 rounded-full transition text-sm"
-                                        title="Copy link to share"
-                                    >
-                                        📋
-                                    </button>
+                                    onClick={() => copyQueryLink(query._id)}
+                                    className="bg-gray-500 cursor-pointer hover:bg-gray-600 text-white px-3 py-2 rounded-full transition text-sm"
+                                    title="Copy link to share"
+                                >
+                                    📋
+                                </button>
                             </div>
                         </div>
                     ))}
